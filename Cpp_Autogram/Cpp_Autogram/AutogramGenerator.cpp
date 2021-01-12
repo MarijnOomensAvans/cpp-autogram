@@ -63,9 +63,37 @@ std::string AutogramGenerator::solveAutogram(const std::string& input)
 		countNumberValues.emplace_back(letter.second);
 	}
 
-	for (size_t i = 0; i < 10; ++i)
+	std::vector<std::string> previousEvaluation;
+	for (size_t i = 0; i < 20; ++i)
 	{
 		std::vector<std::string> evaluation = evaluateCountNumbers(countNumberValues);
+		if (previousEvaluation.size() > 0)
+		{
+			bool correct = false;
+			for (size_t j = 0; j < evaluation.size(); ++j)
+			{
+				if (evaluation[j] != previousEvaluation[j])
+				{
+					previousEvaluation = evaluation;
+				}
+				else {
+					correct = true;
+				}
+			}
+
+			if (correct)
+			{
+				return writeSentence(evaluation, input);
+			}
+		}
+		std::map<char, int> letterCounts2 = startCount(writeSentence(evaluation, input));
+
+		countNumberValues.clear();
+		for (const auto& letter : letterCounts2)
+		{
+			countNumberValues.emplace_back(letter.second);
+		}
+		previousEvaluation = evaluateCountNumbers(countNumberValues);
 	}
 
 	return seed;
