@@ -116,6 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,11 +140,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Resources\sqlite-amalgamation-3340000\sqlite3.c" />
+    <ClCompile Include="..\Dependencies\sqlite-amalgamation-3340000\sqlite3.c" />
+    <ClCompile Include="AutogramGenerator.cpp" />
     <ClCompile Include="Cpp_Autogram.cpp" />
+    <ClCompile Include="DatabaseRAII.cpp" />
+    <ClCompile Include="RandomNumbers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AutogramGenerator.h" />
+    <ClInclude Include="DatabaseRAII.h" />
+    <ClInclude Include="RandomNumbers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
