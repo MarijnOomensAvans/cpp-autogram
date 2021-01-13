@@ -20,7 +20,7 @@ std::string DatabaseRAII::getNumeral(int number)
 	const char* data = "";
 	char* zErrMsg = 0;
 
-	std::string sql = "SELECT num FROM numerals WHERE language_id = 1 AND value = " + std::to_string(number) + ";";
+	std::string sql = "SELECT num FROM numerals WHERE language_id = 2 AND value = " + std::to_string(number) + ";";
 
 	int rc = sqlite3_exec(database, sql.c_str(), callback, &data, &zErrMsg);
 

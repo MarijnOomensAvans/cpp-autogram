@@ -45,57 +45,55 @@ std::string AutogramGenerator::askInput()
 std::string AutogramGenerator::solveAutogram(const std::string& input)
 {
 	std::vector<std::string> countNumbers;
+	std::vector<int> countNumberValues;
+	std::string seed;
+	for (size_t t = 0; t < 10; ++t) {
+		// Generate random numbers and write seed
 
-	std::vector<int> countNumberValues = RandomNumbers::getInstance().getRandomNumbers(1, 200, alphabet.size());
 
-	for (size_t i = 0; i < countNumberValues.size(); i++)
-	{
-		countNumbers.emplace_back(database.getNumeral(countNumberValues[i]));
-	}
+		countNumberValues = RandomNumbers::getInstance().getRandomNumbers(1, 200, alphabet.size());
 
-	std::string seed = writeSentence(countNumbers, input);
+		countNumbers = evaluateCountNumbers(countNumberValues);
 
-	std::map<char, int> letterCounts = startCount(seed);
+		seed = writeSentence(countNumbers, input);
 
-	countNumberValues.clear();
-	for (const auto& letter : letterCounts)
-	{
-		countNumberValues.emplace_back(letter.second);
-	}
+		// ------------------------------------------------------------------------------------------------------------------
 
-	std::vector<std::string> previousEvaluation;
-	for (size_t i = 0; i < 20; ++i)
-	{
-		std::vector<std::string> evaluation = evaluateCountNumbers(countNumberValues);
-		if (previousEvaluation.size() > 0)
+		std::map<char, int> previousCount;
+		for (size_t i = 0; i < 10; ++i)
 		{
-			bool correct = false;
-			for (size_t j = 0; j < evaluation.size(); ++j)
+			std::map<char, int> letterCounts = countLetters(seed);
+
+			countNumberValues.clear();
+			for (const auto& letter : letterCounts)
 			{
-				if (evaluation[j] != previousEvaluation[j])
+				countNumberValues.emplace_back(letter.second);
+			}
+
+			countNumbers.clear();
+			countNumbers = evaluateCountNumbers(countNumberValues);
+
+			seed = writeSentence(countNumbers, input);
+
+			if (previousCount.size() > 0)
+			{
+				bool correct = true;
+				for (size_t i = START_ASCII; i <= END_ASCII; ++i)
 				{
-					previousEvaluation = evaluation;
+					if (letterCounts[i] != previousCount[i])
+					{
+						correct = false;
+					}
 				}
-				else {
-					correct = true;
+
+				if (correct)
+				{
+					return seed;
 				}
 			}
-
-			if (correct)
-			{
-				return writeSentence(evaluation, input);
-			}
+			previousCount = letterCounts;
 		}
-		std::map<char, int> letterCounts2 = startCount(writeSentence(evaluation, input));
-
-		countNumberValues.clear();
-		for (const auto& letter : letterCounts2)
-		{
-			countNumberValues.emplace_back(letter.second);
-		}
-		previousEvaluation = evaluateCountNumbers(countNumberValues);
 	}
-
 	return seed;
 }
 
@@ -107,18 +105,29 @@ std::string AutogramGenerator::writeSentence(std::vector<std::string> countNumbe
 
 	for (size_t i = 0; i < countNumbers.size(); ++i)
 	{
-		if (i == (countNumbers.size() - 1)) {
-			resultStream << "en " + countNumbers[i] + " " + alphabet[i] + "'s.";
+		if (countNumbers[i] == "een" || countNumbers[i] == "one")
+		{
+			if (i == (countNumbers.size() - 1)) {
+				resultStream << "& " + countNumbers[i] + " " + alphabet[i] + ".";
+			}
+			else {
+				resultStream << countNumbers[i] + " " + alphabet[i] + ", ";
+			}
 		}
 		else {
-			resultStream << countNumbers[i] + " " + alphabet[i] + "'s, ";
+			if (i == (countNumbers.size() - 1)) {
+				resultStream << "& " + countNumbers[i] + " " + alphabet[i] + "'s.";
+			}
+			else {
+				resultStream << countNumbers[i] + " " + alphabet[i] + "'s, ";
+			}
 		}
 	}
 
 	return resultStream.str();
 }
 
-std::map<char, int> AutogramGenerator::startCount(const std::string& sentence)
+std::map<char, int> AutogramGenerator::countLetters(const std::string& sentence)
 {
 	std::map<char, int> letterCounts;
 	for (const auto& letter : alphabet)
