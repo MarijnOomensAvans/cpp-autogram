@@ -47,22 +47,23 @@ std::string AutogramGenerator::solveAutogram(const std::string& input)
 	std::vector<std::string> countNumbers;
 	std::vector<int> countNumberValues;
 	std::string seed;
-	for (size_t t = 0; t < 10; ++t) {
+	std::map<char, int> letterCounts;
+	std::map<char, int> previousCount;
+	for (size_t t = 0; t < 75; ++t) {
 		// Generate random numbers and write seed
 
 
 		countNumberValues = RandomNumbers::getInstance().getRandomNumbers(1, 200, alphabet.size());
 
-		countNumbers = evaluateCountNumbers(countNumberValues);
+		evaluateCountNumbers(countNumberValues, countNumbers);
 
 		seed = writeSentence(countNumbers, input);
 
 		// ------------------------------------------------------------------------------------------------------------------
 
-		std::map<char, int> previousCount;
-		for (size_t i = 0; i < 10; ++i)
+		for (size_t i = 0; i < 15; ++i)
 		{
-			std::map<char, int> letterCounts = countLetters(seed);
+			letterCounts = countLetters(seed);
 
 			countNumberValues.clear();
 			for (const auto& letter : letterCounts)
@@ -70,15 +71,14 @@ std::string AutogramGenerator::solveAutogram(const std::string& input)
 				countNumberValues.emplace_back(letter.second);
 			}
 
-			countNumbers.clear();
-			countNumbers = evaluateCountNumbers(countNumberValues);
+			evaluateCountNumbers(countNumberValues, countNumbers);
 
 			seed = writeSentence(countNumbers, input);
 
 			if (previousCount.size() > 0)
 			{
 				bool correct = true;
-				for (size_t i = START_ASCII; i <= END_ASCII; ++i)
+				for (int i = START_ASCII; i <= END_ASCII; ++i)
 				{
 					if (letterCounts[i] != previousCount[i])
 					{
@@ -97,7 +97,7 @@ std::string AutogramGenerator::solveAutogram(const std::string& input)
 	return seed;
 }
 
-std::string AutogramGenerator::writeSentence(std::vector<std::string> countNumbers, const std::string& input)
+std::string AutogramGenerator::writeSentence(const std::vector<std::string>& countNumbers, const std::string& input)
 {
 	std::stringstream resultStream;
 
@@ -149,12 +149,11 @@ std::map<char, int> AutogramGenerator::countLetters(const std::string& sentence)
 	return letterCounts;
 }
 
-std::vector<std::string> AutogramGenerator::evaluateCountNumbers(std::vector<int> values)
+void AutogramGenerator::evaluateCountNumbers(const std::vector<int>& values, std::vector<std::string>& countNumbers)
 {
-	std::vector<std::string> countNumbers;
+	countNumbers.clear();
 	for (size_t i = 0; i < values.size(); i++)
 	{
 		countNumbers.emplace_back(database.getNumeral(values[i]));
 	}
-	return countNumbers;
 }

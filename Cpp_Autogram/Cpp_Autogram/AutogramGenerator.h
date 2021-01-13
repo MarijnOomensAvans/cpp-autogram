@@ -23,8 +23,8 @@ private:
 	void start();
 	std::string askInput();
 	std::string solveAutogram(const std::string& input);
-	std::string writeSentence(std::vector<std::string> countNumbers, const std::string& input);
+	std::string writeSentence(const std::vector<std::string>& countNumbers, const std::string& input);
 	std::map<char, int> countLetters(const std::string& sentence);
-	std::vector<std::string> evaluateCountNumbers(std::vector<int> values);
+	void evaluateCountNumbers(const std::vector<int>& values, std::vector<std::string>& countNumbers);
 };
 

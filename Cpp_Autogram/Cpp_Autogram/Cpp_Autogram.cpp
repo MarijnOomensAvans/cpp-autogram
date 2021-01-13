@@ -1,12 +1,9 @@
+#define _CRTDBG_MAP_ALLOC
 #include "AutogramGenerator.h"
 int main(int ac, char** av)
 {
     AutogramGenerator generator;
-    //DatabaseRAII database("D:/GitHub/cpp-autogram/Cpp_Autogram/Data/numerals.db");
-
-    //std::string result = database.getNumeral(2);
-
-    //std::cout << result << std::endl;
+    _CrtDumpMemoryLeaks();
 
     return 0;
 }

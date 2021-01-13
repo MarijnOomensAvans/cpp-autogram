@@ -17,29 +17,26 @@ DatabaseRAII::~DatabaseRAII()
 
 std::string DatabaseRAII::getNumeral(int number)
 {
-	const char* data = "";
-	char* zErrMsg = 0;
-
 	std::string sql = "SELECT num FROM numerals WHERE language_id = 2 AND value = " + std::to_string(number) + ";";
 
-	int rc = sqlite3_exec(database, sql.c_str(), callback, &data, &zErrMsg);
+	int rc = sqlite3_exec(database, sql.c_str(), callback, this, 0);
 
 	if (rc != SQLITE_OK) {
-		fprintf(stderr, "SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
+		
 	}
 
-	return data;
+	return result;
+}
+
+void DatabaseRAII::callback(const std::string& result)
+{
+	this->result = result;
 }
 
 int DatabaseRAII::callback(void* data, int argc, char** argv, char** azColName)
 {
-	char** result_str = (char**)data;
-	*result_str = (char*)calloc(strlen(argv[0]), sizeof(char));
-	if (*result_str != 0)
-	{
-		strcpy(*result_str, argv[0]);
-	}
+	DatabaseRAII* cust = reinterpret_cast<DatabaseRAII*>(data);
+	cust->callback(argv[0]);
 
 	return 0;
 }

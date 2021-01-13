@@ -10,8 +10,11 @@ public:
 	~DatabaseRAII();
 
 	std::string getNumeral(int number);
+
+	void callback(const std::string& result);
 private:
 	sqlite3* database;
+	std::string result;
 
 	static int callback(void* data, int argc, char** argv, char** azColName);
 };
