@@ -7,9 +7,15 @@ class DatabaseRAII
 {
 public:
 	DatabaseRAII(const std::string& databasePath);
-	~DatabaseRAII();
 
-	std::string getNumeral(int number);
+	// Rule of 5
+	~DatabaseRAII();
+	DatabaseRAII(DatabaseRAII const& other) = delete;
+	DatabaseRAII(DatabaseRAII&& other) = delete;
+	DatabaseRAII& operator=(DatabaseRAII const& other) = delete;
+	DatabaseRAII& operator=(DatabaseRAII&& other) = delete;
+
+	std::string getNumeral(int number, int language);
 
 	void callback(const std::string& result);
 private:

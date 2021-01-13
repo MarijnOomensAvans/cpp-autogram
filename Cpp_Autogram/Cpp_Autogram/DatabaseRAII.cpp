@@ -2,12 +2,20 @@
 
 DatabaseRAII::DatabaseRAII(const std::string& databasePath)
 {
-	int exit = sqlite3_open(databasePath.c_str(), &database);
-
-	if (exit)
+	try
 	{
-		std::cout << "Can't open database!" << std::endl;
+		int exit = sqlite3_open(databasePath.c_str(), &database);
+		if (exit)
+		{
+			throw std::invalid_argument("Invalid database path!");
+		}
+
 	}
+	catch (const std::exception& ex)
+	{
+		std::cerr << "Error: " << ex.what() << '\n';
+	}
+
 }
 
 DatabaseRAII::~DatabaseRAII()
@@ -15,15 +23,23 @@ DatabaseRAII::~DatabaseRAII()
 	sqlite3_close(database);
 }
 
-std::string DatabaseRAII::getNumeral(int number)
+std::string DatabaseRAII::getNumeral(int number, int language)
 {
-	std::string sql = "SELECT num FROM numerals WHERE language_id = 2 AND value = " + std::to_string(number) + ";";
+	try
+	{
+		std::string sql = "SELECT num FROM numerals WHERE language_id = " + std::to_string(language) + " AND value = " + std::to_string(number) + ";";
 
-	int rc = sqlite3_exec(database, sql.c_str(), callback, this, 0);
+		int rc = sqlite3_exec(database, sql.c_str(), callback, this, 0);
 
-	if (rc != SQLITE_OK) {
-		
+		if (rc != SQLITE_OK) {
+			throw std::runtime_error("Failed to execute query: " + sql);
+		}
 	}
+	catch (const std::exception& ex)
+	{
+		std::cerr << "Error: " << ex.what() << '\n';
+	}
+
 
 	return result;
 }

@@ -7,7 +7,7 @@ class RandomNumbers
 {
 public:
 	static RandomNumbers& getInstance();
-	std::vector<int> getRandomNumbers(int minRange, int maxRange, int amount);
+	std::vector<int> getRandomNumbers(int minRange, int maxRange, int amount) noexcept;
 private:
 	static RandomNumbers randomNumbers;
 

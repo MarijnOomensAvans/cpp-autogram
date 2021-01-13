@@ -6,10 +6,6 @@ AutogramGenerator::AutogramGenerator()
 	start();
 }
 
-AutogramGenerator::~AutogramGenerator()
-{
-}
-
 void AutogramGenerator::generateAlphabet()
 {
 	for (size_t i = START_ASCII; i <= END_ASCII; ++i)
@@ -25,7 +21,7 @@ void AutogramGenerator::start()
 	{
 		std::string input = askInput();
 		std::string result = solveAutogram(input);
-		std::cout << result << std::endl;
+		std::cout << result + "\n" << std::endl;
 	}
 }
 
@@ -33,8 +29,12 @@ void AutogramGenerator::start()
 std::string AutogramGenerator::askInput()
 {
 	std::cout << "Welcome to the CPP2 Autogram generator made by Marijn Oomens! \n" << std::endl;
+	std::cout << "Please select your language first, type 1 for Dutch or 2 for English, then press ENTER \n" << std::endl;
+	std::string lang;
+	std::getline(std::cin, lang);
+	chooseLanguage(std::stoi(lang));
 	std::cout << "Please type the base sentence of you autogram and press ENTER: \n" << std::endl;
-	std::string input = "";
+	std::string input;
 	std::getline(std::cin, input);
 	std::cout << "\nYour chosen base sentence: \n" << std::endl;
 	std::cout << input + "\n \n" << std::endl;
@@ -97,7 +97,7 @@ std::string AutogramGenerator::solveAutogram(const std::string& input)
 	return seed;
 }
 
-std::string AutogramGenerator::writeSentence(const std::vector<std::string>& countNumbers, const std::string& input)
+std::string AutogramGenerator::writeSentence(const std::vector<std::string>& countNumbers, const std::string& input) const
 {
 	std::stringstream resultStream;
 
@@ -127,7 +127,7 @@ std::string AutogramGenerator::writeSentence(const std::vector<std::string>& cou
 	return resultStream.str();
 }
 
-std::map<char, int> AutogramGenerator::countLetters(const std::string& sentence)
+std::map<char, int> AutogramGenerator::countLetters(const std::string& sentence) const
 {
 	std::map<char, int> letterCounts;
 	for (const auto& letter : alphabet)
@@ -154,6 +154,30 @@ void AutogramGenerator::evaluateCountNumbers(const std::vector<int>& values, std
 	countNumbers.clear();
 	for (size_t i = 0; i < values.size(); i++)
 	{
-		countNumbers.emplace_back(database.getNumeral(values[i]));
+		countNumbers.emplace_back(database.getNumeral(values[i], language));
+	}
+}
+
+void AutogramGenerator::chooseLanguage(int input)
+{
+	try
+	{
+		if (input == 1)
+		{
+			language = input;
+			std::cout << "Autogram language set to Dutch \n" << std::endl;
+		}
+		else if(input == 2) {
+			language = input;
+			std::cout << "Autogram language set to English \n" << std::endl;
+		}
+		else {
+			throw std::runtime_error("Wrong input for language, defaulting to English \n");
+			language = 0;
+		}
+	}
+	catch (const std::exception& ex)
+	{
+		std::cerr << "Error: " << ex.what() << '\n';
 	}
 }
